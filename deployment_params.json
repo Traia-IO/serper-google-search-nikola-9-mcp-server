@@ -10,8 +10,7 @@
       "SERPER_GOOGLE_SEARCH_NIKOLA_9_API_KEY"
     ],
     "capabilities": [
-      "google_search",
-      "get_api_info"
+      "google_search"
     ],
     "payment_protocol": "402",
     "dual_mode": true,

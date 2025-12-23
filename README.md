@@ -22,7 +22,6 @@ This is an MCP (Model Context Protocol) server that provides with authentication
 This server provides the following tools:
 
 - **`example_tool`**: Placeholder tool (to be implemented)
-- **`get_api_info`**: Get information about the API service and authentication status
 
 *Note: Replace `example_tool` with actual Serper Google Search Nikola 9 API tools based on the documentation.*
 
@@ -239,8 +238,7 @@ The `deployment_params.json` file contains the deployment configuration for this
     "api_key_header": "Authorization",
 "capabilities": [
       // List all implemented tool names here
-      "example_tool",
-      "get_api_info"
+      "example_tool"
     ]
   },
   "deployment_method": "cloud_run",
