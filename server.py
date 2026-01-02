@@ -21,7 +21,7 @@ Environment Variables:
 import os
 import logging
 import sys
-from typing import Dict, Any, Optional
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 from datetime import datetime
 
 import requests
@@ -97,7 +97,7 @@ logger.info(f"✅ FastMCP server created")
 @mcp.tool()
 @require_payment_for_tool(
     price=TokenAmount(
-        amount="3000",  # 0.003 tokens
+        amount="1000",  # 0.001 tokens
         asset=TokenAsset(
             address="0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
             decimals=6,
@@ -108,27 +108,48 @@ logger.info(f"✅ FastMCP server created")
             )
         )
     ),
-    description="Perform a Google search using a single search quer"
+    description="Perform a Google web search using Serper. Returns "
 
 )
-async def google_search(
+async def serper_search(
     context: Context,
-    q: Optional[str] = None
+    q: Optional[str] = None,
+    gl: Optional[str] = None,
+    hl: Optional[str] = None,
+    location: Optional[str] = None,
+    autocorrect: bool = False,
+    num: Optional[float] = None,
+    page: Optional[float] = None
 ) -> Dict[str, Any]:
     """
-    Perform a Google search using a single search query keyword. This endpoint takes only one required parameter: the search query string. Returns Google search results including organic results, answer boxes, and related searches.
+    Perform a Google web search using Serper. Returns high-level structured SERP signals such as knowledge graph and answer boxes.
 
     Generated from OpenAPI endpoint: POST /search
 
     Args:
         context: MCP context (auto-injected by framework, not user-provided)
-        q: The search query keyword or phrase to search for on Google. This is the only required parameter. Examples: 'artificial intelligence', 'python programming', 'best restaurants near me'. Do not include additional parameters - only provide the search query string. (optional) Examples: "artificial intelligence", "python programming", "best restaurants near me"
+        q: Search query string. (optional) Examples: "openai company", "artificial intelligence"
+        gl: Country code for search results. (optional) Examples: "us", "ng"
+        hl: Language / locale code. (optional) Examples: "en"
+        location: Geographic location to localize results. (optional) Examples: "Lagos", "Nigeria"
+        autocorrect: Enable or disable Google's autocorrect. (optional, default: False) Examples: True
+        num: Number of results to return. (optional) Examples: 10
+        page: Page number for pagination. (optional) Examples: 1
 
     Returns:
         Dictionary with API response
 
     Example Usage:
-        await google_search(q="artificial intelligence")
+        # Minimal (required params only):
+        await serper_search(q="openai company")
+
+        # With optional parameters:
+        await serper_search(
+        q="openai company",
+        gl="us",
+        hl="en",
+        location="Lagos"
+    )
 
         Note: 'context' parameter is auto-injected by MCP framework
     """
@@ -147,6 +168,12 @@ async def google_search(
             url,
             json={k: v for k, v in {
                 "q": q,
+                "gl": gl,
+                "hl": hl,
+                "location": location,
+                "autocorrect": autocorrect,
+                "num": num,
+                "page": page,
             }.items() if v is not None},
             params=params,
             headers=headers,
@@ -157,7 +184,7 @@ async def google_search(
         return response.json()
 
     except Exception as e:
-        logger.error(f"Error in google_search: {e}")
+        logger.error(f"Error in serper_search: {e}")
         return {"error": str(e), "endpoint": "/search"}
 
 
